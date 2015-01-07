@@ -12,12 +12,11 @@ import net.sf.json.JSONException;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.jenkinsci.plugins.MaidsafeJenkins.Exception.BaseBranchMisMatchException;
+import org.jenkinsci.plugins.MaidsafeJenkins.Exception.TooManyPRForModule;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-
-import com.jenkinsci.plugins.MaidsafeJenkins.Exception.BaseBranchMisMatchException;
-import com.jenkinsci.plugins.MaidsafeJenkins.Exception.TooManyPRForModule;
 
 /**
  *

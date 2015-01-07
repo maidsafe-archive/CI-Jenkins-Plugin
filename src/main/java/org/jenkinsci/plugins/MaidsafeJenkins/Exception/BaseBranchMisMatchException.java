@@ -1,4 +1,4 @@
-package com.jenkinsci.plugins.MaidsafeJenkins.Exception;
+package org.jenkinsci.plugins.MaidsafeJenkins.Exception;
 
 public class BaseBranchMisMatchException extends Exception {
 	
