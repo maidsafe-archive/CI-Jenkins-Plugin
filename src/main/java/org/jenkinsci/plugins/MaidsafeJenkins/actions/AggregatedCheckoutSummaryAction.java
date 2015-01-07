@@ -7,14 +7,14 @@ import org.kohsuke.stapler.export.ExportedBean;
 import hudson.model.Action;
 import hudson.model.Api;
 
-@ExportedBean(defaultVisibility=999)
+@ExportedBean(defaultVisibility = 999)
 public class AggregatedCheckoutSummaryAction implements Action {
 	private final String ACTION_NAME = "Aggregated Checkout Summary";
 	private HashMap<String, Object> checkoutSummary = new HashMap<String, Object>();
 
-    public Api getApi() {
-        return new Api(this);
-    }
+	public Api getApi() {
+		return new Api(this);
+	}
 
 	@Exported
 	public HashMap<String, Object> getCheckoutSummary() {
@@ -29,13 +29,12 @@ public class AggregatedCheckoutSummaryAction implements Action {
 		return "";
 	}
 
-	public String getDisplayName() {		
+	public String getDisplayName() {
 		return ACTION_NAME;
 	}
 
-	public String getUrlName() {	
+	public String getUrlName() {
 		return "aggregatedCheckoutSummary";
 	}
-	
 
 }
