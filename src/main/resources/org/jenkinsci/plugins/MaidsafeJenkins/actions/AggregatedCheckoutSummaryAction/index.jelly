@@ -1,0 +1,35 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+ 	<l:layout title="Github Checkout Summary">	
+	    <l:main-panel>
+	       	<h1>Github Checkout Summary</h1>
+	       	<j:forEach var="key" items="${it.checkoutSummary.keySet()}">
+		       	<div style="padding:20px">
+		       		<h3>${key}</h3>		       		
+		       		<div style="padding-left:10px">
+		       			<div>
+					       	<b>Result :  </b>
+					       	<j:if test="${it.checkoutSummary[key].buildPassed}"><b style="color:green">PASS</b></j:if>   
+					       	<j:if test="${!it.checkoutSummary[key].buildPassed}"><b style="color:red">FAILED</b></j:if>  
+				       	</div>
+				       	<j:if test="${!it.checkoutSummary[key].buildPassed}">
+					       	<div>	       	
+						       	<b>Reason :  </b>${it.checkoutSummary[key].failureReason}	       	
+					       	</div>
+				       	</j:if>
+				       	<div>
+					       	<b>Base Branch :  </b> ${it.checkoutSummary[key].baseBranch}  
+				       	</div>
+				        <div>
+				       		<b>Matching Pull Request :  </b>
+				       		<div>
+					       		<j:forEach var="url" items="${it.checkoutSummary[key].matchingPRList}">
+					       			${url}
+					       		</j:forEach>
+				       		</div>
+					    </div>
+		       		</div>
+		       	</div>	           		     	    
+	       	</j:forEach>  	   
+		</l:main-panel>
+  	</l:layout>
+</j:jelly>
