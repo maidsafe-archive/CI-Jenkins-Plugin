@@ -13,7 +13,7 @@ public class TargetBuildParameterUtil {
 	private final String BRANCH_PARAM_KEY = "branch";
 	private final String OWNER_PARAM_KEY = "owner";
 	private final String REPO_PARAM_KEY = "repo";
-	
+
 	private BuildTargetParameter convert(JSONObject param) {
 		BuildTargetParameter targetParam;
 		targetParam = new BuildTargetParameter();
@@ -22,12 +22,13 @@ public class TargetBuildParameterUtil {
 		targetParam.setRepo(param.getString(REPO_PARAM_KEY));
 		return targetParam;
 	}
-	
+
 	private boolean isJSONObjectValid(JSONObject param) {
-		return param.getString(BRANCH_PARAM_KEY) != null && param.getString(OWNER_PARAM_KEY) != null && param.getString(REPO_PARAM_KEY) != null
-				&& !param.getString(BRANCH_PARAM_KEY).isEmpty() && !param.getString(OWNER_PARAM_KEY).isEmpty() && !param.getString(REPO_PARAM_KEY).isEmpty();
+		return param.getString(BRANCH_PARAM_KEY) != null && param.getString(OWNER_PARAM_KEY) != null
+		    && param.getString(REPO_PARAM_KEY) != null && !param.getString(BRANCH_PARAM_KEY).isEmpty()
+		    && !param.getString(OWNER_PARAM_KEY).isEmpty() && !param.getString(REPO_PARAM_KEY).isEmpty();
 	}
-	
+
 	public List<BuildTargetParameter> parse(JSONObject json) {
 		List<BuildTargetParameter> params;
 		JSONArray targetParams;
@@ -39,18 +40,17 @@ public class TargetBuildParameterUtil {
 				tempObject = (JSONObject) param;
 				if (!isJSONObjectValid(tempObject)) {
 					return null;
-				}	
+				}
 				params.add(convert(tempObject));
 			}
 		} else {
 			tempObject = json.getJSONObject(ROOT_KEY);
 			if (!isJSONObjectValid(tempObject)) {
 				return null;
-			}			
+			}
 			params.add(convert(tempObject));
 		}
 		return params;
 	}
-	
-	
+
 }

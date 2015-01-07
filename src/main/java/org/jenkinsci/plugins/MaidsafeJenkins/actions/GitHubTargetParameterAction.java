@@ -24,56 +24,56 @@ import hudson.model.Cause;
 import hudson.model.CauseAction;
 import hudson.model.Hudson;
 
+public class GitHubTargetParameterAction implements Action {
+	private AbstractProject<?, ?> project;
 
-public class GitHubTargetParameterAction implements Action {	
-	private AbstractProject<?, ?> project;	
-	
 	public GitHubTargetParameterAction(AbstractProject<?, ?> project) {
-		this.project = project;			
+		this.project = project;
 	}
-		
+
 	private String getValueFromConfig(String fieldName) {
 		String fieldValue = "";
-		try{
-			String PACKAGE = "org.jenkinsci.plugins.MaidsafeJenkins.MaidsafeJenkinsBuilder";			 
-			String xml = project.getConfigFile().asString();			
-			xml = xml.substring(xml.indexOf(PACKAGE), xml.lastIndexOf(PACKAGE));			
-			xml = xml.substring(xml.indexOf(fieldName), xml.lastIndexOf(fieldName));			
-			fieldValue = xml.substring(xml.indexOf(">")+1, xml.indexOf("<"));
-		}catch(Exception ex) {
+		try {
+			String PACKAGE = "org.jenkinsci.plugins.MaidsafeJenkins.MaidsafeJenkinsBuilder";
+			String xml = project.getConfigFile().asString();
+			xml = xml.substring(xml.indexOf(PACKAGE), xml.lastIndexOf(PACKAGE));
+			xml = xml.substring(xml.indexOf(fieldName), xml.lastIndexOf(fieldName));
+			fieldValue = xml.substring(xml.indexOf(">") + 1, xml.indexOf("<"));
+		} catch (Exception ex) {
 			ex.printStackTrace();
-		}		
+		}
 		return fieldValue;
 	}
-	
+
 	@Exported
 	public String getProjectName() {
 		return project.getName();
-	}	
-	
+	}
+
 	@Exported
-	public String getOrgName() {		
+	public String getOrgName() {
 		return getValueFromConfig("orgName");
 	}
-	
+
 	@Exported
-	public String getSuperProjectName() {		
+	public String getSuperProjectName() {
 		return getValueFromConfig("superProjectName");
 	}
-		
+
 	@Exported
 	public String getDefaultBaseBranch() {
 		return getValueFromConfig("defaultBaseBranch");
 	}
-	
+
 	@Exported
 	public String getAccessToken() {
 		MaidsafeJenkinsBuilder.DescriptorImpl descriptor;
-		descriptor = (MaidsafeJenkinsBuilder.DescriptorImpl) Jenkins.getInstance().getDescriptor(MaidsafeJenkinsBuilder.class);		
+		descriptor = (MaidsafeJenkinsBuilder.DescriptorImpl) Jenkins.getInstance().getDescriptor(
+		    MaidsafeJenkinsBuilder.class);
 		return descriptor.getGithubToken();
 	}
-	
-	public void doParamsSubmit(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {			
+
+	public void doParamsSubmit(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
 		List<BuildTargetParameter> buildTargetParams;
 		TargetParameterBuildAction paramAction;
 		JSONObject jsonObject;
@@ -85,14 +85,14 @@ public class GitHubTargetParameterAction implements Action {
 			return;
 		} else {
 			paramAction = new TargetParameterBuildAction();
-			paramAction.setBaseBranch(jsonObject.getString("baseBranch"));			
+			paramAction.setBaseBranch(jsonObject.getString("baseBranch"));
 			paramAction.setParameters(buildTargetParams);
 			Hudson.getInstance().getQueue().schedule2(project, 0, paramAction, new CauseAction(new Cause.UserIdCause()));
 		}
 		rsp.sendRedirect("../");
 	}
 
-	public String getIconFileName() {		
+	public String getIconFileName() {
 		return Functions.getResourcePath() + "/plugin/MaidsafeJenkins/icons/octocat.jpg";
 	}
 

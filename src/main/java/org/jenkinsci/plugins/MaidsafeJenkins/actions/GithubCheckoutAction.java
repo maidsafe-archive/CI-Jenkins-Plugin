@@ -1,6 +1,5 @@
 package org.jenkinsci.plugins.MaidsafeJenkins.actions;
 
-
 import java.util.HashMap;
 import java.util.Map;
 import org.jenkinsci.plugins.MaidsafeJenkins.util.ShellScript;
@@ -10,59 +9,59 @@ import hudson.Functions;
 import hudson.model.Action;
 import hudson.model.Api;
 
-@ExportedBean(defaultVisibility=999)
+@ExportedBean(defaultVisibility = 999)
 public class GithubCheckoutAction extends ActionSummary implements Action {
-	  private final String DISPLAY_NAME = "Github Checkout Summary"; 
-	    private final String URL = "checkoutSummary";
-	    private final String ICON = Functions.getResourcePath() + "/plugin/MaidsafeJenkins/icons/octocat.jpg";    
-	    
-	    private transient ShellScript script;
-	    private String orgName;
-	    private Map<String, Map<String, Object>> actualPRList;
-	    
-	    public Api getApi() {
-	        return new Api(this);
-	    }
-	    
-	    public String getDisplayName() {		
-			return DISPLAY_NAME;
-		}
+	private final String DISPLAY_NAME = "Github Checkout Summary";
+	private final String URL = "checkoutSummary";
+	private final String ICON = Functions.getResourcePath() + "/plugin/MaidsafeJenkins/icons/octocat.jpg";
 
-		public String getIconFileName() { 
-			return ICON;
-		}
+	private transient ShellScript script;
+	private String orgName;
+	private Map<String, Map<String, Object>> actualPRList;
 
-		public String getUrlName() {		
-			return URL;
-		}
-	    
-	    public ShellScript getScript() {
-	        return script;
-	    }
+	public Api getApi() {
+		return new Api(this);
+	}
 
-	    public void setScript(ShellScript script) {
-	        this.script = script;
-	    }	    	  
-	    
-	    @Exported
-	    public HashMap<String, Object> getGithubCheckoutAction() {
-	    	return getSummary();
-	    }
+	public String getDisplayName() {
+		return DISPLAY_NAME;
+	}
 
-		public String getOrgName() {
-			return orgName;
-		}
+	public String getIconFileName() {
+		return ICON;
+	}
 
-		public void setOrgName(String orgName) {
-			this.orgName = orgName;
-		}
-				
-		public Map<String, Map<String, Object>> getActualPRList() {
-			return actualPRList;
-		}
+	public String getUrlName() {
+		return URL;
+	}
 
-		public void setActualPRList(Map<String, Map<String, Object>> matchingPR) {
-			this.actualPRList = matchingPR;
-		}
-	   	    	  
+	public ShellScript getScript() {
+		return script;
+	}
+
+	public void setScript(ShellScript script) {
+		this.script = script;
+	}
+
+	@Exported
+	public HashMap<String, Object> getGithubCheckoutAction() {
+		return getSummary();
+	}
+
+	public String getOrgName() {
+		return orgName;
+	}
+
+	public void setOrgName(String orgName) {
+		this.orgName = orgName;
+	}
+
+	public Map<String, Map<String, Object>> getActualPRList() {
+		return actualPRList;
+	}
+
+	public void setActualPRList(Map<String, Map<String, Object>> matchingPR) {
+		this.actualPRList = matchingPR;
+	}
+
 }

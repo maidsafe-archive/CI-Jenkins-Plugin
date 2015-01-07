@@ -27,81 +27,81 @@ import hudson.tasks.Publisher;
  * @author krishna
  *
  */
-public class GithubCommitStatusUpdate extends Publisher {	
-	
-	
-	/*
-	 * Without the @DataBoundConstructor Annotation the Publisher step is not recognized by Jenkins  		
-	 */
-	@DataBoundConstructor
-	public GithubCommitStatusUpdate() {
-		
-	}
+public class GithubCommitStatusUpdate extends Publisher { 
+  
+  
+  /*
+   * Without the @DataBoundConstructor Annotation the Publisher step is not recognized by Jenkins     
+   */
+  @DataBoundConstructor
+  public GithubCommitStatusUpdate() {
+    
+  }
 
-	/*
-	 * Configuring NONE based on suggestion from API Docs
-	 * @see hudson.tasks.BuildStep#getRequiredMonitorService()
-	 */
-	public BuildStepMonitor getRequiredMonitorService() {		
-		return BuildStepMonitor.NONE;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see hudson.tasks.BuildStepCompatibilityLayer#perform(hudson.model.AbstractBuild, hudson.Launcher, hudson.model.BuildListener)
-	 */
-	@Override
-	public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener)
-			throws InterruptedException, IOException {
-		GithubInitializerAction initializerAction;
-		CommitStatus commitStatusApi;
-		PrintStream logger;
-		logger = listener.getLogger();				
-		initializerAction = build.getAction(GithubInitializerAction.class);
-		if (initializerAction == null) {
-			logger.println("Pull Requests could not be found. Failed to update commit status in Github");
-			return true;
-		}	
-		commitStatusApi = new CommitStatus(initializerAction.getOrgName(), logger,
-				initializerAction.isTestingMode(), initializerAction.getOauthAccessToken());		
-		if (build.getResult() == Result.SUCCESS) {
-			commitStatusApi.updateAll(initializerAction.getPullRequests(), 
-					State.SUCCESS, build.getUrl());
-		} else {
-			commitStatusApi.updateAll(initializerAction.getPullRequests(), 
-					State.FAILURE, build.getUrl(), initializerAction.getFailureReason());
-		}
-			
-		return true;
-	}
-	
-	@Override
-	public GithubCommitStatusUpdateDescriptor getDescriptor() {	
-		return (GithubCommitStatusUpdateDescriptor) super.getDescriptor();
-	}
-	
-	/*
-	 * A simple BuildStepDescriptor is created to expose the build step.
-	 * This does not take any parameter inputs.  
-	 */
-	@Extension	
-	public static class GithubCommitStatusUpdateDescriptor extends BuildStepDescriptor<Publisher> {
-		private final String DISPLAY_NAME = "Set Commit Status for Pull Requests";
-		
-		public GithubCommitStatusUpdateDescriptor() {
-			load();
-		}			
+  /*
+   * Configuring NONE based on suggestion from API Docs
+   * @see hudson.tasks.BuildStep#getRequiredMonitorService()
+   */
+  public BuildStepMonitor getRequiredMonitorService() {   
+    return BuildStepMonitor.NONE;
+  }
+  
+  /*
+   * (non-Javadoc)
+   * @see hudson.tasks.BuildStepCompatibilityLayer#perform(hudson.model.AbstractBuild, hudson.Launcher, hudson.model.BuildListener)
+   */
+  @Override
+  public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener)
+      throws InterruptedException, IOException {
+    GithubInitializerAction initializerAction;
+    CommitStatus commitStatusApi;
+    PrintStream logger;
+    logger = listener.getLogger();        
+    initializerAction = build.getAction(GithubInitializerAction.class);
+    if (initializerAction == null) {
+      logger.println("Pull Requests could not be found. Failed to update commit status in Github");
+      return true;
+    } 
+    commitStatusApi = new CommitStatus(initializerAction.getOrgName(), logger,
+        initializerAction.isTestingMode(), initializerAction.getOauthAccessToken());    
+    if (build.getResult() == Result.SUCCESS) {
+      commitStatusApi.updateAll(initializerAction.getPullRequests(), 
+          State.SUCCESS, build.getUrl());
+    } else {
+      commitStatusApi.updateAll(initializerAction.getPullRequests(), 
+          State.FAILURE, build.getUrl(), initializerAction.getFailureReason());
+    }
+      
+    return true;
+  }
+  
+  @Override
+  public GithubCommitStatusUpdateDescriptor getDescriptor() { 
+    return (GithubCommitStatusUpdateDescriptor) super.getDescriptor();
+  }
+  
+  /*
+   * A simple BuildStepDescriptor is created to expose the build step.
+   * This does not take any parameter inputs.  
+   */
+  @Extension  
+  public static class GithubCommitStatusUpdateDescriptor extends BuildStepDescriptor<Publisher> {
+    private final String DISPLAY_NAME = "Set Commit Status for Pull Requests";
+    
+    public GithubCommitStatusUpdateDescriptor() {
+      load();
+    }     
 
-		@Override
-		public boolean isApplicable(Class<? extends AbstractProject> jobType) { 
-			return true;
-		}
+    @Override
+    public boolean isApplicable(Class<? extends AbstractProject> jobType) { 
+      return true;
+    }
 
-		@Override
-		public String getDisplayName() {		
-			return DISPLAY_NAME;
-		}
-		
-	}
+    @Override
+    public String getDisplayName() {    
+      return DISPLAY_NAME;
+    }
+    
+  }
 
 }

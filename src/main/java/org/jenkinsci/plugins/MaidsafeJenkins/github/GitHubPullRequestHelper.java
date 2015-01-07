@@ -28,7 +28,6 @@ public class GitHubPullRequestHelper {
 	private List<String> repositories;
 	private PrintStream logger;
 
-	
 	public static enum PR_MATCH_STRATERGY {
 		BRANCH_NAME_STARTS_WITH, BRANCH_NAME_STARTS_WITH_IGNORE_CASE
 	}
@@ -47,10 +46,10 @@ public class GitHubPullRequestHelper {
 		this.repositories = repositories;
 		this.logger = logger;
 	}
-	
+
 	// TODO multi thread the PR requests
 	public Map<String, Map<String, Object>> getMatchingPR(String text, Filter filter, PR_MATCH_STRATERGY stratergy)
-			throws Exception {
+	    throws Exception {
 		Map<String, Map<String, Object>> matchingPRForModule = new HashMap<String, Map<String, Object>>();
 		JSONObject tempObj = null;
 		String tempBaseBranch;
@@ -64,18 +63,18 @@ public class GitHubPullRequestHelper {
 			stratergy = PR_MATCH_STRATERGY.BRANCH_NAME_STARTS_WITH_IGNORE_CASE;
 		}
 		for (String repo : repositories) {
-			prListforRepo = getPRListFromGithub(org, repo, filter);			
+			prListforRepo = getPRListFromGithub(org, repo, filter);
 			if (prListforRepo == null || prListforRepo.size() == 0) {
 				continue;
-			}		
-			tempObj = findMatchingPR(text, stratergy, prListforRepo, repo);		
+			}
+			tempObj = findMatchingPR(text, stratergy, prListforRepo, repo);
 			if (tempObj != null) {
 				tempBaseBranch = (String) ((JSONObject) tempObj.get("base")).get("ref");
 				if (baseBranchforPR == null) {
 					repoBaseBranch = repo;
 					baseBranchforPR = tempBaseBranch;
-				} else if (!baseBranchforPR.equals(tempBaseBranch)) { 
-					throw new BaseBranchMisMatchException(repo, tempBaseBranch, repoBaseBranch, baseBranchforPR);					
+				} else if (!baseBranchforPR.equals(tempBaseBranch)) {
+					throw new BaseBranchMisMatchException(repo, tempBaseBranch, repoBaseBranch, baseBranchforPR);
 				}
 				matchingPRForModule.put(repo, toMap(tempObj));
 			}
@@ -83,27 +82,27 @@ public class GitHubPullRequestHelper {
 		logger.println(matchingPRForModule.size() + " modules have matching Pull Requests");
 		return matchingPRForModule;
 	}
-	
+
 	public void setAccessToken(String token) {
 		accessToken = token;
 	}
-		
-	
-	private boolean isMatchFound(PR_MATCH_STRATERGY stratergy, String prBranchRef, String key) {		
-		boolean matched;		
+
+	private boolean isMatchFound(PR_MATCH_STRATERGY stratergy, String prBranchRef, String key) {
+		boolean matched;
 		switch (stratergy) {
-			case BRANCH_NAME_STARTS_WITH:
-				matched = prBranchRef.startsWith(key);
-				break;
-	
-			default: // BRANCH_NAME_STARTS_WITH_IGNORE_CASE
-				matched = prBranchRef.toLowerCase().startsWith(key.toLowerCase());
-				break;
-		}	
+		case BRANCH_NAME_STARTS_WITH:
+			matched = prBranchRef.startsWith(key);
+			break;
+
+		default: // BRANCH_NAME_STARTS_WITH_IGNORE_CASE
+			matched = prBranchRef.toLowerCase().startsWith(key.toLowerCase());
+			break;
+		}
 		return matched;
 	}
 
-	private JSONObject findMatchingPR(String key, PR_MATCH_STRATERGY stratergy, JSONArray prList, String repo) throws Exception {
+	private JSONObject findMatchingPR(String key, PR_MATCH_STRATERGY stratergy, JSONArray prList, String repo)
+	    throws Exception {
 		JSONObject pullRequest;
 		JSONObject prHead;
 		JSONObject lastMatchedPR = null;
@@ -111,19 +110,26 @@ public class GitHubPullRequestHelper {
 		for (Object obj : prList) {
 			matched = false;
 			pullRequest = (JSONObject) obj;
-			prHead = (JSONObject) pullRequest.get(PR_HEAD_REPO_KEY);			
-			matched = isMatchFound(stratergy, prHead.get(PR_BRANCH_KEY).toString().replace("-", "_"), key.replace("-", "_"));// Replacing the characters to ensure uniformity 
-			if (matched && lastMatchedPR != null) { // Only one PR should match, thus a validation to check the	condition				
+			prHead = (JSONObject) pullRequest.get(PR_HEAD_REPO_KEY);
+			matched = isMatchFound(stratergy, prHead.get(PR_BRANCH_KEY).toString().replace("-", "_"), key.replace("-", "_"));// Replacing
+																																																											 // the
+																																																											 // characters
+																																																											 // to
+																																																											 // ensure
+																																																											 // uniformity
+			if (matched && lastMatchedPR != null) { // Only one PR should match, thus
+																							// a validation to check the
+																							// condition
 				throw new TooManyPRForModule(repo);
 			} else if (matched) {
 				lastMatchedPR = pullRequest;
 			}
-		}				
+		}
 		return lastMatchedPR;
 	}
 
 	private String prepareURL(String org, String repo, Filter filter) {
-		StringBuilder endPoint = new StringBuilder(String.format(PR_REQUEST, org, repo));		
+		StringBuilder endPoint = new StringBuilder(String.format(PR_REQUEST, org, repo));
 		switch (filter) {
 		case OPEN:
 			endPoint.append("state=open");
@@ -131,27 +137,27 @@ public class GitHubPullRequestHelper {
 
 		default:
 			break;
-		}		
+		}
 		return endPoint.toString();
 	}
 
 	private JSONArray getPRListFromGithub(String org, String repo, Filter filter) {
 		logger.println("Fetching PR from " + org + "/" + repo);
-		JSONArray openPrs = null;		
+		JSONArray openPrs = null;
 		try {
-			HttpClient client = new HttpClient();						
-			GetMethod prListRequest = new GetMethod(prepareURL(org, repo, filter));			
+			HttpClient client = new HttpClient();
+			GetMethod prListRequest = new GetMethod(prepareURL(org, repo, filter));
 			if (accessToken != null && !accessToken.isEmpty()) {
-				prListRequest.addRequestHeader("Authorization", "token " + accessToken);				
-			}			
-			
+				prListRequest.addRequestHeader("Authorization", "token " + accessToken);
+			}
+
 			int statusCode = client.executeMethod(prListRequest);
 			if (statusCode != HttpStatus.SC_OK) {
 				logger.println("Pull Request API failed with Error Code :: " + statusCode);
 				logger.println(prListRequest.getResponseBodyAsString());
 				return openPrs;
 			}
-			openPrs = (JSONArray) new JSONParser().parse(prListRequest.getResponseBodyAsString());			
+			openPrs = (JSONArray) new JSONParser().parse(prListRequest.getResponseBodyAsString());
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			logger.println(ex);
