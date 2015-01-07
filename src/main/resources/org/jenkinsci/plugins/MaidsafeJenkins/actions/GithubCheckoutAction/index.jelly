@@ -1,0 +1,41 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+ 	<l:layout title="Github Checkout Summary">
+ 		<l:side-panel>
+            <l:tasks>
+                <l:task icon="images/24x24/up.gif" href="../" title="${%Back to Project}"/>
+            </l:tasks>
+        </l:side-panel> 			
+	    <l:main-panel>
+	       	<h1>Github Checkout Summary</h1>
+	       <!--	<div style="margin-bottom:15px">
+		       	<b>Result :  </b>
+		       	<j:if test="${it.githubCheckoutAction.buildPassed}"><b style="color:green">PASS</b></j:if>   
+		       	<j:if test="${!it.githubCheckoutAction.buildPassed}"><b style="color:red">FAILED</b></j:if>  
+	       	</div> -->
+	       	<j:if test="${!it.githubCheckoutAction.buildPassed}">
+		       	<div style="margin-bottom:15px">	       	
+			       	<b>Reason :  </b>${it.githubCheckoutAction.failureReason}	       	
+		       	</div>		       	
+	       	</j:if>	    
+	       	<div style="margin-bottom:15px">
+		       	<b>Base Branch :  </b> ${it.githubCheckoutAction.baseBranch}  
+	       	</div>	       
+	       	<div style="margin-bottom:15px">
+		       	<b>Modules built on branches : </b>
+		       	<div>
+		       		<j:forEach var="key" items="${it.githubCheckoutAction.branchUsedByModule.keySet()}">
+		       			<div>${key} : ${it.githubCheckoutAction.branchUsedByModule[key]}</div>
+		       		</j:forEach>
+		       	</div>		       	
+	       	</div>	
+	       	 <div style="margin-bottom:15px">
+	       		<b>Matching Pull Request :  </b>
+	       		<div>
+		       		<j:forEach var="url" items="${it.githubCheckoutAction.matchingPRList}">
+		       			<div>${url}</div>
+		       		</j:forEach>
+	       		</div>
+		    </div>           		     	      	   
+		</l:main-panel>
+  	</l:layout>
+</j:jelly>
