@@ -29,7 +29,7 @@ public class GitHubHelper {
 	private final String GIT_SSH_URL = "git@github.com:%s/%s.git";
 	private final String SUM_MODULE_INIT_CMD = "git submodule init";
 	private final String SUB_MODULE_UPDATE_CMD = "git submodule foreach 'git checkout %s && git pull'";
-	private final String SUBMOD_GREP_CMD = "git config --list | sed -rn 's/submodule\\.([^.]*).*\\/(.*)/\\1,\\2/p'";
+	private final String SUBMOD_GREP_CMD = "git config --list | sed -En 's/submodule\\.([^.]*).*\\/(.*)/\\1,\\2/p'";
 	private final String SUPER_PROJ_UPDATE_CMD = "git checkout %s && git pull";
 	private final String HARD_RESET_CMD = "git reset --hard HEAD && git submodule foreach 'git reset --hard HEAD'";
 	private String accessToken;
