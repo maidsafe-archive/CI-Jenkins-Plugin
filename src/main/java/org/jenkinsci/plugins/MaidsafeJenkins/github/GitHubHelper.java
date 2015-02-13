@@ -198,6 +198,10 @@ public class GitHubHelper {
 
 	private List<String> branchAndCheckout(String localBranch, String baseBranch, String pullRemoteSSHUrl) {
 		List<String> mergeCommand = new ArrayList<String>();
+		if (!baseBranch.equals(defaultBaseBranch)) {
+			mergeCommand.add("git checkout " + baseBranch);
+			mergeCommand.add("git pull ");
+		}	
 		mergeCommand.add("git checkout -b " + localBranch + " " + baseBranch);
 		mergeCommand.add("git pull " + pullRemoteSSHUrl + " " + localBranch);
 		return mergeCommand;
