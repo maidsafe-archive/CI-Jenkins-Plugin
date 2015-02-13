@@ -10,6 +10,21 @@ public class GithubInitializerAction extends InvisibleAction {
 	private String oauthAccessToken;
 	private List<String> modules;
 	private Map<String, Map<String, Object>> pullRequests;
+	private List<String> modulesForTarget;
+	/**
+	 * @return the modulesForTarget
+	 */
+	public List<String> getModulesForTarget() {
+		return modulesForTarget;
+	}
+
+	/**
+	 * @param modulesForTarget the modulesForTarget to set
+	 */
+	public void setModulesForTarget(List<String> modulesForTarget) {
+		this.modulesForTarget = modulesForTarget;
+	}
+
 	private boolean testingMode;
 	private StringBuilder failureReason;
 

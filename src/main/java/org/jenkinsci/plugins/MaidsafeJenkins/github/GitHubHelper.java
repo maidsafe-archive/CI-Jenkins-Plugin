@@ -15,6 +15,8 @@ import org.jenkinsci.plugins.MaidsafeJenkins.actions.BuildTargetParameter;
 import org.jenkinsci.plugins.MaidsafeJenkins.actions.GithubCheckoutAction;
 import org.jenkinsci.plugins.MaidsafeJenkins.util.ShellScript;
 
+import com.jcraft.jsch.Logger;
+
 /**
  *
  * @author krishnakumarp
@@ -148,9 +150,9 @@ public class GitHubHelper {
 	}
 
 	@SuppressWarnings("unchecked")
-	public GithubCheckoutAction checkoutModules(Map<String, Map<String, Object>> prList) throws Exception {
+	public GithubCheckoutAction checkoutModules(Map<String, Map<String, Object>> prList, List<String> modulesForTarget) throws Exception {
 		int scriptExecutionStatus;
-		String temp = null;
+		String temp = null;		
 		Map<String, Object> pullRequest;
 		List<String> command;
 		scriptExecutionStatus = checkoutToDefaultBaseBranch();
@@ -164,6 +166,25 @@ public class GitHubHelper {
 			return checkoutAction;
 		}
 		Iterator<String> prModules = prList.keySet().iterator();
+		temp = prModules.next();
+		if (modulesForTarget != null && !modulesForTarget.isEmpty()) { // Checkout to latest target branch
+			consoleLogger.println("****** Checking out and updating target braches ***********");			
+			for (String module : modulesForTarget) {
+				command = new ArrayList<String>();
+				moveToSubFoler(command);
+				command.add("cd " + modulePathMapping.get(module));
+				command.add("git checkout " + getRemoteBranchNameToMerge(prList.get(temp)));
+				command.add("git pull");
+				scriptExecutionStatus = script.execute(command);
+				if (scriptExecutionStatus != 0) {
+					doHardReset();
+					checkoutAction.setBuildPassed(false);
+					checkoutAction.setReasonForFailure("Checking out to Target branch failed for :- " + module);
+					return checkoutAction;
+				}
+			}
+		}
+		prModules = prList.keySet().iterator();
 		while (prModules.hasNext()) {
 			command = new ArrayList<String>();
 			temp = prModules.next();
@@ -198,7 +219,8 @@ public class GitHubHelper {
 
 	private List<String> branchAndCheckout(String localBranch, String baseBranch, String pullRemoteSSHUrl) {
 		List<String> mergeCommand = new ArrayList<String>();
-		if (!baseBranch.equals(defaultBaseBranch)) {
+		// TODO Uncomment the if part after ensuring the buildForTarget does not need this
+		if (!baseBranch.equals(defaultBaseBranch)) { 
 			mergeCommand.add("git checkout " + baseBranch);
 			mergeCommand.add("git pull ");
 		}	

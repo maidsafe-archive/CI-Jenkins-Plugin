@@ -25,6 +25,7 @@ import org.jenkinsci.plugins.MaidsafeJenkins.github.CommitStatus;
 import org.jenkinsci.plugins.MaidsafeJenkins.github.CommitStatus.State;
 import org.jenkinsci.plugins.MaidsafeJenkins.github.GitHubHelper;
 import org.jenkinsci.plugins.MaidsafeJenkins.github.GitHubPullRequestHelper;
+import org.jenkinsci.plugins.MaidsafeJenkins.github.GithubAPI;
 import org.jenkinsci.plugins.MaidsafeJenkins.util.ShellScript;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
@@ -111,6 +112,29 @@ public class MaidsafeJenkinsBuilder extends Builder {
     action.setModulesWithMatchingPR(modules);
     action.setActualPRList(prList);
   }
+  
+  private void setModulesForTargetBranch(GithubInitializerAction initializerAction, PrintStream logger) {
+  	GithubAPI api;
+  	List<String> buildForTarget;
+  	List<String> modules;
+  	Iterator<String> iterator;
+  	String targetBranch;
+  	modules = initializerAction.getModules();
+  	buildForTarget = new ArrayList<String>();
+  	iterator = initializerAction.getPullRequests().keySet().iterator();
+  	targetBranch = (String) ((Map<String, Object>)((Map<String, Object>) 
+  			initializerAction.getPullRequests().get(iterator.next())).get("base")).get("ref");
+  	if (targetBranch.equals(defaultBaseBranch)) {
+  		return;
+  	}
+  	api = new GithubAPI(getDescriptor().getGithubToken(), logger);
+  	for (String module : modules) {
+  		if(api.getBranchList(orgName, module).contains(targetBranch)) {
+  			buildForTarget.add(module);
+  		}
+  	}
+  	initializerAction.setModulesForTarget(buildForTarget);
+  }
 
   /**
    * Creates a {@link GithubInitializerAction} for the build. While
@@ -173,6 +197,13 @@ public class MaidsafeJenkinsBuilder extends Builder {
     return action;
   }
 
+  /**
+   * Build logic to be triggered when the job is started by a JIRA trigger or for PR Issue Key
+   * @param build
+   * @param launcher
+   * @param listener
+   * @return boolean (Success or Failure)
+   */
   private boolean buildForPullRequest(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) {
     EnvVars envVars;
     GithubCheckoutAction checkoutAction;
@@ -210,6 +241,9 @@ public class MaidsafeJenkinsBuilder extends Builder {
         initializerAction.setOrgName(orgName);
         if (!issueKey.isEmpty()) {
           initializerAction.setPullRequests(getPullRequest(issueKey, initializerAction.getModules(), logger));
+          if (initializerAction.getPullRequests() != null && !initializerAction.getPullRequests().isEmpty()) {        	            
+            setModulesForTargetBranch(initializerAction, logger);
+          }
         }
         build.addAction(initializerAction);
       }
@@ -233,7 +267,7 @@ public class MaidsafeJenkinsBuilder extends Builder {
       updateCheckoutActionForPR(checkoutAction, pullRequest);
       githubHelper = new GitHubHelper(superProjectName, repoSubFolder, logger, script, defaultBaseBranch,
           checkoutAction);
-      checkoutAction = githubHelper.checkoutModules(pullRequest);
+      checkoutAction = githubHelper.checkoutModules(pullRequest, initializerAction.getModulesForTarget());
       checkoutAction.setScript(script);
       checkoutAction.setBaseBranch(defaultBaseBranch);
     } catch (Exception exception) {
