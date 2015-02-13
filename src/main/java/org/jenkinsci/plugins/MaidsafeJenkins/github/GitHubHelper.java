@@ -5,17 +5,14 @@
 package org.jenkinsci.plugins.MaidsafeJenkins.github;
 
 import hudson.*;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.*;
-
 import org.jenkinsci.plugins.MaidsafeJenkins.actions.BuildTargetParameter;
 import org.jenkinsci.plugins.MaidsafeJenkins.actions.GithubCheckoutAction;
 import org.jenkinsci.plugins.MaidsafeJenkins.util.ShellScript;
 
-import com.jcraft.jsch.Logger;
 
 /**
  *
