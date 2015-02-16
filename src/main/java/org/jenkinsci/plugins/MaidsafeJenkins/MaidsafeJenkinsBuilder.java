@@ -114,26 +114,26 @@ public class MaidsafeJenkinsBuilder extends Builder {
   }
   
   private void setModulesForTargetBranch(GithubInitializerAction initializerAction, PrintStream logger) {
-  	GithubAPI api;
-  	List<String> buildForTarget;
-  	List<String> modules;
-  	Iterator<String> iterator;
-  	String targetBranch;
-  	modules = initializerAction.getModules();
-  	buildForTarget = new ArrayList<String>();
-  	iterator = initializerAction.getPullRequests().keySet().iterator();
-  	targetBranch = (String) ((Map<String, Object>)((Map<String, Object>) 
-  			initializerAction.getPullRequests().get(iterator.next())).get("base")).get("ref");
-  	if (targetBranch.equals(defaultBaseBranch)) {
-  		return;
-  	}
-  	api = new GithubAPI(getDescriptor().getGithubToken(), logger);
-  	for (String module : modules) {
-  		if(api.getBranchList(orgName, module).contains(targetBranch)) {
-  			buildForTarget.add(module);
-  		}
-  	}
-  	initializerAction.setModulesForTarget(buildForTarget);
+    GithubAPI api;
+    List<String> buildForTarget;
+    List<String> modules;
+    Iterator<String> iterator;
+    String targetBranch;
+    modules = initializerAction.getModules();
+    buildForTarget = new ArrayList<String>();
+    iterator = initializerAction.getPullRequests().keySet().iterator();
+    targetBranch = (String) ((Map<String, Object>)((Map<String, Object>) 
+        initializerAction.getPullRequests().get(iterator.next())).get("base")).get("ref");
+    if (targetBranch.equals(defaultBaseBranch)) {
+      return;
+    }
+    api = new GithubAPI(getDescriptor().getGithubToken(), logger);
+    for (String module : modules) {
+      if(api.getBranchList(orgName, module).contains(targetBranch)) {
+        buildForTarget.add(module);
+      }
+    }
+    initializerAction.setModulesForTarget(buildForTarget);
   }
 
   /**
@@ -241,7 +241,7 @@ public class MaidsafeJenkinsBuilder extends Builder {
         initializerAction.setOrgName(orgName);
         if (!issueKey.isEmpty()) {
           initializerAction.setPullRequests(getPullRequest(issueKey, initializerAction.getModules(), logger));
-          if (initializerAction.getPullRequests() != null && !initializerAction.getPullRequests().isEmpty()) {        	            
+          if (initializerAction.getPullRequests() != null && !initializerAction.getPullRequests().isEmpty()) {                      
             setModulesForTargetBranch(initializerAction, logger);
           }
         }

@@ -9,32 +9,32 @@ import hudson.model.Api;
 
 @ExportedBean(defaultVisibility = 999)
 public class AggregatedCheckoutSummaryAction implements Action {
-	private final String ACTION_NAME = "Aggregated Checkout Summary";
-	private HashMap<String, Object> checkoutSummary = new HashMap<String, Object>();
+  private final String ACTION_NAME = "Aggregated Checkout Summary";
+  private HashMap<String, Object> checkoutSummary = new HashMap<String, Object>();
 
-	public Api getApi() {
-		return new Api(this);
-	}
+  public Api getApi() {
+    return new Api(this);
+  }
 
-	@Exported
-	public HashMap<String, Object> getCheckoutSummary() {
-		return checkoutSummary;
-	}
+  @Exported
+  public HashMap<String, Object> getCheckoutSummary() {
+    return checkoutSummary;
+  }
 
-	public void setCheckoutSummary(HashMap<String, Object> checkoutSummary) {
-		this.checkoutSummary = checkoutSummary;
-	}
+  public void setCheckoutSummary(HashMap<String, Object> checkoutSummary) {
+    this.checkoutSummary = checkoutSummary;
+  }
 
-	public String getIconFileName() {
-		return "";
-	}
+  public String getIconFileName() {
+    return "";
+  }
 
-	public String getDisplayName() {
-		return ACTION_NAME;
-	}
+  public String getDisplayName() {
+    return ACTION_NAME;
+  }
 
-	public String getUrlName() {
-		return "aggregatedCheckoutSummary";
-	}
+  public String getUrlName() {
+    return "aggregatedCheckoutSummary";
+  }
 
 }
