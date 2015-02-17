@@ -25,8 +25,8 @@ public class TargetBuildParameterUtil {
 
 	private boolean isJSONObjectValid(JSONObject param) {
 		return param.getString(BRANCH_PARAM_KEY) != null && param.getString(OWNER_PARAM_KEY) != null
-		    && param.getString(REPO_PARAM_KEY) != null && !param.getString(BRANCH_PARAM_KEY).isEmpty()
-		    && !param.getString(OWNER_PARAM_KEY).isEmpty() && !param.getString(REPO_PARAM_KEY).isEmpty();
+				&& param.getString(REPO_PARAM_KEY) != null && !param.getString(BRANCH_PARAM_KEY).isEmpty()
+				&& !param.getString(OWNER_PARAM_KEY).isEmpty() && !param.getString(REPO_PARAM_KEY).isEmpty();
 	}
 
 	public List<BuildTargetParameter> parse(JSONObject json) {

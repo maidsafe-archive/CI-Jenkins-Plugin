@@ -6,63 +6,78 @@ import hudson.model.InvisibleAction;
 
 public class GithubInitializerAction extends InvisibleAction {
 
-	private String orgName;
-	private String oauthAccessToken;
-	private List<String> modules;
-	private Map<String, Map<String, Object>> pullRequests;
-	private boolean testingMode;
-	private StringBuilder failureReason;
+  private String orgName;
+  private String oauthAccessToken;
+  private List<String> modules;
+  private Map<String, Map<String, Object>> pullRequests;
+  private List<String> modulesForTarget;
+  /**
+   * @return the modulesForTarget
+   */
+  public List<String> getModulesForTarget() {
+    return modulesForTarget;
+  }
 
-	public GithubInitializerAction() {
-		failureReason = new StringBuilder();
-	}
+  /**
+   * @param modulesForTarget the modulesForTarget to set
+   */
+  public void setModulesForTarget(List<String> modulesForTarget) {
+    this.modulesForTarget = modulesForTarget;
+  }
 
-	public boolean isTestingMode() {
-		return testingMode;
-	}
+  private boolean testingMode;
+  private StringBuilder failureReason;
 
-	public void setTestingMode(boolean testingMode) {
-		this.testingMode = testingMode;
-	}
+  public GithubInitializerAction() {
+    failureReason = new StringBuilder();
+  }
 
-	public String getOrgName() {
-		return orgName;
-	}
+  public boolean isTestingMode() {
+    return testingMode;
+  }
 
-	public void setOrgName(String orgName) {
-		this.orgName = orgName;
-	}
+  public void setTestingMode(boolean testingMode) {
+    this.testingMode = testingMode;
+  }
 
-	public String getOauthAccessToken() {
-		return oauthAccessToken;
-	}
+  public String getOrgName() {
+    return orgName;
+  }
 
-	public void setOauthAccessToken(String oauthAccessToken) {
-		this.oauthAccessToken = oauthAccessToken;
-	}
+  public void setOrgName(String orgName) {
+    this.orgName = orgName;
+  }
 
-	public List<String> getModules() {
-		return modules;
-	}
+  public String getOauthAccessToken() {
+    return oauthAccessToken;
+  }
 
-	public void setModules(List<String> subModules) {
-		this.modules = subModules;
-	}
+  public void setOauthAccessToken(String oauthAccessToken) {
+    this.oauthAccessToken = oauthAccessToken;
+  }
 
-	public Map<String, Map<String, Object>> getPullRequests() {
-		return pullRequests;
-	}
+  public List<String> getModules() {
+    return modules;
+  }
 
-	public void setPullRequests(Map<String, Map<String, Object>> pullRequests) {
-		this.pullRequests = pullRequests;
-	}
+  public void setModules(List<String> subModules) {
+    this.modules = subModules;
+  }
 
-	public String getFailureReason() {
-		return failureReason.toString();
-	}
+  public Map<String, Map<String, Object>> getPullRequests() {
+    return pullRequests;
+  }
 
-	public void setFailureReason(String failureReason) {
-		this.failureReason.append(failureReason).append("\n");
-	}
+  public void setPullRequests(Map<String, Map<String, Object>> pullRequests) {
+    this.pullRequests = pullRequests;
+  }
+
+  public String getFailureReason() {
+    return failureReason.toString();
+  }
+
+  public void setFailureReason(String failureReason) {
+    this.failureReason.append(failureReason).append("\n");
+  }
 
 }

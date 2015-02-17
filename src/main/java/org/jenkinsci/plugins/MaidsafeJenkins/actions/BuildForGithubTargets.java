@@ -11,9 +11,9 @@ import hudson.model.AbstractProject;
 @Extension
 public class BuildForGithubTargets extends TransientProjectActionFactory {
 
-	@Override
-	public Collection<? extends Action> createFor(AbstractProject target) {
-		return Collections.singleton(new GitHubTargetParameterAction(target));
-	}
+  @Override
+  public Collection<? extends Action> createFor(AbstractProject target) {
+    return Collections.singleton(new GitHubTargetParameterAction(target));
+  }
 
 }
