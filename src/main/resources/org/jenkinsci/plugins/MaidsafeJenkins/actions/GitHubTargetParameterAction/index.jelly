@@ -47,7 +47,7 @@
 	  		</f:form>	       		     	      	  
 		</l:main-panel>
   	</l:layout>
-  	<script type="text/javascript" src="../../../plugin/MaidsafeJenkins/js/buildnow.js"></script>
+  	<script type="text/javascript" src="${app.rootUrl + '/plugin/MaidsafeJenkins/js/buildnow.js'}"></script>
   	<style>
   		td.setting-name {
 			vertical-align: initial !important;
