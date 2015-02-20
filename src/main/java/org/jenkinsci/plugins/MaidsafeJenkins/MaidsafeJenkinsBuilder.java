@@ -7,16 +7,12 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
-
 import java.io.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.servlet.ServletException;
-
 import net.sf.json.JSONObject;
-
 import org.jenkinsci.plugins.MaidsafeJenkins.actions.BuildTargetParameter;
 import org.jenkinsci.plugins.MaidsafeJenkins.actions.GithubCheckoutAction;
 import org.jenkinsci.plugins.MaidsafeJenkins.actions.GithubInitializerAction;
@@ -45,6 +41,7 @@ public class MaidsafeJenkinsBuilder extends Builder {
   private final String superProjectName;
   private final String defaultBaseBranch;
   private final boolean updateCommitStatusToPending;
+  private final boolean continueAfterCommitStatusUpdate;
   private final boolean testingMode;
   private static String subFolder;
 
@@ -67,6 +64,10 @@ public class MaidsafeJenkinsBuilder extends Builder {
   public boolean getUpdateCommitStatusToPending() {
     return updateCommitStatusToPending;
   }
+  
+  public boolean getContinueAfterCommitStatusUpdate() {
+    return continueAfterCommitStatusUpdate;
+  }
 
   public boolean getTestingMode() {
     return testingMode;
@@ -76,13 +77,14 @@ public class MaidsafeJenkinsBuilder extends Builder {
   // "DataBoundConstructor"
   @DataBoundConstructor
   public MaidsafeJenkinsBuilder(String orgName, String repoSubFolder, String superProjectName,
-      String defaultBaseBranch, boolean updateCommitStatusToPending, boolean testingMode) {
+      String defaultBaseBranch, boolean updateCommitStatusToPending, boolean continueAfterCommitStatusUpdate, boolean testingMode) {
     this.orgName = orgName;
     this.repoSubFolder = repoSubFolder;
     this.superProjectName = superProjectName;
     this.defaultBaseBranch = defaultBaseBranch;
     this.updateCommitStatusToPending = updateCommitStatusToPending;
     this.testingMode = testingMode;
+    this.continueAfterCommitStatusUpdate = continueAfterCommitStatusUpdate;
   }
 
   /**
@@ -168,7 +170,7 @@ public class MaidsafeJenkinsBuilder extends Builder {
    * @param issueKey
    * @param modules
    * @param logger
-   * @return {@link Map} of submodules as keys and their corresonding
+   * @return {@link Map} of submodules as keys and their corresponding
    *         PullRequest details
    * @throws Exception
    */
@@ -251,7 +253,9 @@ public class MaidsafeJenkinsBuilder extends Builder {
         commitStatus = new CommitStatus(orgName, logger, initializerAction.isTestingMode(),
             initializerAction.getOauthAccessToken());
         commitStatus.updateAll(initializerAction.getPullRequests(), State.PENDING, build.getUrl());
-        return true;
+        if (!continueAfterCommitStatusUpdate) {
+        	return true;
+        }
       }
       build.addAction(checkoutAction);
       List<String> shellCommands = new ArrayList<String>();
@@ -472,13 +476,6 @@ public class MaidsafeJenkinsBuilder extends Builder {
      */
     public DescriptorImpl() {
       load();
-    }
-
-    public ListBoxModel doFillRepoItems() {
-      ListBoxModel items = new ListBoxModel();
-      items.add("Maidsafe-Common");
-      items.add("Maidsafe-RUDP");
-      return items;
     }
 
     /**
