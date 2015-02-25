@@ -214,10 +214,10 @@ public class GitHubHelper {
   }
 
   private List<String> branchAndCheckout(BuildTargetParameter param) {
-  	List<String> mergeCommand = new ArrayList<String>();
+    List<String> mergeCommand = new ArrayList<String>();
     mergeCommand.add("git checkout -b br_" + param.getOwner() + "_" + param.getBranch() + " " + defaultBaseBranch);
     mergeCommand.add("git pull " + String.format(GIT_SSH_URL, param.getOwner(), param.getRepo()) + " " + param.getBranch());
-  	return mergeCommand;
+    return mergeCommand;
   }
   
   private List<String> branchAndCheckout(String localBranch, String baseBranch, String pullRemoteSSHUrl) {
