@@ -398,7 +398,7 @@ public class MaidsafeJenkinsBuilder extends Builder {
       }
       branchesCleaned = new ArrayList<String>();
       for (BuildTargetParameter param : paramAction.getParameters()) {
-        targetBranch = param.getBranch();
+        targetBranch = "br_" + param.getOwner() + "_" + param.getBranch();
         if (branchesCleaned.contains(targetBranch)) {
           continue;
         }

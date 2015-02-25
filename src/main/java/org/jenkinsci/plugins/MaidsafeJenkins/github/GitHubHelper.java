@@ -131,8 +131,7 @@ public class GitHubHelper {
       temp = modulePathMapping.get(param.getRepo().toLowerCase());
       moveToSubFoler(command);
       command.add("cd " + temp);
-      command.addAll(branchAndCheckout(param.getBranch(), defaultBaseBranch,
-          String.format(GIT_SSH_URL, param.getOwner(), param.getRepo())));
+      command.addAll(branchAndCheckout(param));
       scriptExecutionStatus = script.execute(command);
       if (scriptExecutionStatus != 0) {
         doHardReset();
@@ -214,9 +213,15 @@ public class GitHubHelper {
     return ((Map<String, Object>) pullRequest.get("head")).get("ref").toString();
   }
 
+  private List<String> branchAndCheckout(BuildTargetParameter param) {
+    List<String> mergeCommand = new ArrayList<String>();
+    mergeCommand.add("git checkout -b br_" + param.getOwner() + "_" + param.getBranch() + " " + defaultBaseBranch);
+    mergeCommand.add("git pull " + String.format(GIT_SSH_URL, param.getOwner(), param.getRepo()) + " " + param.getBranch());
+    return mergeCommand;
+  }
+  
   private List<String> branchAndCheckout(String localBranch, String baseBranch, String pullRemoteSSHUrl) {
     List<String> mergeCommand = new ArrayList<String>();
-    // TODO Uncomment the if part after ensuring the buildForTarget does not need this
     if (!baseBranch.equals(defaultBaseBranch)) { 
       mergeCommand.add("git checkout " + baseBranch);
       mergeCommand.add("git pull ");
